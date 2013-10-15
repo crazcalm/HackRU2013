@@ -26,20 +26,21 @@
 	<body>
 		<div>
 			<header>
-				<h1>Assassins (mail form)</h1>
+				<h1>Magic Mail (Python version)</h1>
 			</header>
 	
-			<div>
+			<div class = "body">
 					
-				<form action="/" autocomplete="on" method="post">
-  					From (name):<input type="text" name="from_name"><br>
-  					From E-mail: <input type="email" name="from_email" autocomplete="off"><br><br>
+				<form action="/" autocomplete="off" method="post">
+  					From (name):     <input type="text" name="from_name"><br>
+  					From E-mail:     <input type="email" name="from_email"><br>
+  					Message subject: <input type="text" name="message_subject"><br>
+  					<br>
   					
-  					Message: <br /><textarea name="message" rows="4" cols="50">Please enter you message here.
-							</textarea><br /><br />
+  					Message <br /><textarea name="message" rows="4" cols="50">Please enter you message here.</textarea><br /><br />
   					
-  					To (name): <input type="text" name="to_name"><br>
-  					To E-mail: <input type="email" name="to_email" autocomplete="off"><br>
+  					To (name):       <input type="text" name="to_name"><br>
+  					To E-mail:       <input type="email" name="to_email" autocomplete="off"><br>
   					<input type="submit">
 				</form>
 					
@@ -61,7 +62,7 @@
 
 			<footer>
 				<p>
-					&copy; Copyright  by Marcus Willock
+					&copy; Coded by Marcus Willock
 				</p>
 			</footer>
 		</div>

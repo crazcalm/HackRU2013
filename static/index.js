@@ -3,6 +3,6 @@
  */
 $(document).ready(function(){
 	
-	alert("Are you working?");
+	//alert("Are you working?");
 	
 });

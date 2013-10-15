@@ -1,15 +1,8 @@
-import os, urllib2
+import os, urllib, random, shutil
 import flask, flask.views
-import sendgrid
-
-import urllib
+import sendgrid, secret
 from bs4 import BeautifulSoup
-
-import random
-import shutil
 from PIL import Image
-
-import json
 
 app = flask.Flask(__name__)
 
@@ -32,17 +25,28 @@ def white_pic(filename):
     # Process every pixel
     for x in range(width):
         for y in range(height):
-            current_color = picture.getpixel( (x,y) )
-            #print "Old: ",current_color
-            ####################################################################
-            # Do your logic here and create a new (R,G,B) tuple called new_color
-            ####################################################################
+            
+            # colors the (x,y) pixel white
             picture.putpixel( (x,y), (255,255,255))
-            current_color2 = picture.getpixel( (x,y) )
-            #print "new: ", current_color2, "\n"
     
     new_photo_test = pic_location
     picture.save(new_photo_test)
+
+def deleating_file(pic_file_name):
+    """
+    Deletes the file at is located in the static folder.
+    """
+    
+    current_dir = os.getcwd()
+    
+    os.chdir(current_dir+"/static")
+    
+    if os.path.exists(pic_file_name):
+        os.remove(pic_file_name)
+        
+    os.chdir(current_dir)
+    print "The deleting file function ran."
+
 
 def random_id():
     """
@@ -100,26 +104,25 @@ class Email(flask.views.MethodView):
         # Getting the info from the form
         from_name = flask.request.form["from_name"]
         from_email = flask.request.form["from_email"]
+        message_subject = flask.request.form["message_subject"]
         message    = flask.request.form["message"]
         to_name    = flask.request.form["to_name"]
         to_email   = flask.request.form["to_email"]
         
         # Stores the info
-        info = [from_name, from_email, message, to_name, to_email]
+        info = [from_name, from_email,message_subject, message, to_name, to_email]
         
         # Insert magicmail code
         url = "http://api.img4me.com/?text="+str(message)+"&font=arial&fcolor=000000&size=10&bcolor=FFFFFF&type=png"
         
         pic_file_name = downloading_pic(url)
        
-        html_body = "<img src=http://33c0ffc2.ngrok.com/static/"+pic_file_name+">"
+        html_body = "<img src=http://33c0ffc2.ngrok.com/static/"+pic_file_name+"/>"
         
-        
-        # TESTING: Sendgrid regular email
         # Connects to sendgrid
-        s = sendgrid.Sendgrid("crazcalm", "11Crazcalm", secure=True)
+        s = sendgrid.Sendgrid(secret.user_name, secret.user_password, secure=True)
         
-        message = sendgrid.Message(from_email, "Your target", message, html_body)
+        message = sendgrid.Message(from_email, message_subject, message, html_body)
         message.add_to(to_email, to_name)
         
         message.add_unique_argument("filename",pic_file_name)
@@ -128,29 +131,29 @@ class Email(flask.views.MethodView):
         
         flask.flash(info)
         
-        #print flask.request.form
-        
-        
         return self.get()
     
 
-@app.route("/hook", methods=["POST", "GET"])
-def hook():
-    print flask.request
-    print flask.request.data
-    
-    hack = flask.request.data
-    
-    print str(hack)
-    print hack.split(":"),"\n\n"
-    print hack.split(":")[3]
-    print hack.split(":")[3].split(",")[0]
-    
-    pic_file_name = hack.split(":")[3].split(",")[0][1:-1]
-    white_pic(pic_file_name)
 
+
+@app.route("/hook", methods=["POST"])
+def hook():
     
-    return "Hello Hook!"
+    try:
+        hack = flask.request.data
+    
+        # Parses the data to get the file name
+        pic_file_name = hack.split(":")[3].split(",")[0][1:-1]
+        
+        white_pic(pic_file_name)
+        deleating_file(pic_file_name)
+        
+    except:
+        pass
+    
+    return "Captain Hook!"
+        
+     
    
         
         
