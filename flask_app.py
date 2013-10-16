@@ -161,5 +161,5 @@ def hook():
 app.add_url_rule('/', view_func=Email.as_view('main'), methods=['GET', 'POST'])
 
 if __name__ == '__main__':
-    app.debug = True
+    app.debug = False
     app.run()
